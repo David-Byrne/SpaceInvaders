@@ -1,26 +1,23 @@
-//David Byrne, 14344646
-package week3;
+package week4;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
+import java.awt.image.*;
 import javax.swing.*;
-
-import week2.GameObject;
 
 
 public class InvadersApplication extends JFrame implements Runnable, KeyListener{
 	
-	private static final Dimension WindowSize = new Dimension(600,600);
+	private boolean isGraphicsInitialised =false;
+	private static final Dimension WindowSize = new Dimension(800,600);
+	private BufferStrategy strategy;
 	private static final int NUMALIENS = 30;
-	private Sprite2D[] AliensArray = new Sprite2D[NUMALIENS];
-	private Sprite2D PlayerShip;
-	private Thread t;
-	
+	private Alien[] AliensArray = new Alien[NUMALIENS];
+	private Spaceship PlayerShip;
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public static void main(String[] args) 
+	{
 		new InvadersApplication();
 	}
 	
@@ -28,17 +25,18 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 	{
 		ImageIcon Icon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\space_invader.png");
 		Image AlienImg = Icon.getImage();
-		AlienImg = AlienImg.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
+		AlienImg = AlienImg.getScaledInstance(50, 50, Image.SCALE_DEFAULT);
 		for (int i = 0; i < NUMALIENS; i++)
 		{
-			AliensArray[i] = new Sprite2D(AlienImg);
+			AliensArray[i] = new Alien(AlienImg, (int)WindowSize.getWidth());
+			AliensArray[i].setPosition(Math.floor(i/5)*60  , 100+(i%5)*50);
+			//sets them in rows with 5 colomns by diving by 5 and flooring to get X offset
 		}
 		
 		ImageIcon PlayerIcon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\player_ship.png");
 		Image PlayerImage = PlayerIcon.getImage();
 		PlayerImage = PlayerImage.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
-		PlayerShip = new Sprite2D(PlayerImage);
-		PlayerShip.setPosition(285, 570);
+		PlayerShip = new Spaceship(PlayerImage, (int)WindowSize.getWidth());
 		
 		addKeyListener(this);
 		
@@ -50,7 +48,13 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 		setBounds(x, y, WindowSize.width, WindowSize.height);
 		this.getContentPane().setBackground(Color.BLACK);
 		setVisible(true);
-		t = new Thread(this);
+		
+		isGraphicsInitialised = true;
+		
+		createBufferStrategy(2);
+		strategy = getBufferStrategy();
+		
+		Thread t = new Thread(this);
 		t.run();
 	}
 
@@ -58,13 +62,24 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 	{
 		while(true)
 		{
+			boolean hitEdge = false;
 			for (int i = 0; i < NUMALIENS; i++)
 			{
-				AliensArray[i].moveEnemy();
+				hitEdge = AliensArray[i].move() || hitEdge;
+				/*Order important, either use this order or use a single pipe OR.
+					If not: after the first alien hit the edge in a turn statement would evaluate to true
+					on the first part so it would never call the move method for the remaining aliens.*/
+			}
+			if (hitEdge)
+			{
+				for (int j = 0; j < NUMALIENS; j++)
+				{
+					AliensArray[j].reverseDirection();
+				}
 			}
 			this.repaint();
 			try {
-				t.sleep(20);
+				Thread.sleep(10);
 			} catch (InterruptedException e) 
 			{
 				e.printStackTrace();
@@ -86,26 +101,36 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 		PlayerShip.setXSpeed(0);
-		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		if (e.getKeyCode() == KeyEvent.VK_LEFT) 
+		{
+			PlayerShip.setXSpeed(-1);
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) 
+		{
+			PlayerShip.setXSpeed(1);
+		}
 	}
 	
 	public void paint(Graphics g)
 	{
-		super.paintComponents(g);
-		for (int i = 0; i < NUMALIENS; i++)
+		if(isGraphicsInitialised)
 		{
-			AliensArray[i].paint(g);
+			g = strategy.getDrawGraphics();
+			super.paintComponents(g);
+			for (int i = 0; i < NUMALIENS; i++)
+			{
+				AliensArray[i].paint(g);
+			}
+			PlayerShip.move();
+			PlayerShip.paint(g);
+			g.dispose();
+			strategy.show();
 		}
-		PlayerShip.movePlayer();
-		PlayerShip.paint(g);
 	}
 
 }
