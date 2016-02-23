@@ -1,9 +1,11 @@
-package week4;
+package week5;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 
@@ -15,6 +17,8 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 	private static final int NUMALIENS = 30;
 	private Alien[] AliensArray = new Alien[NUMALIENS];
 	private Spaceship PlayerShip;
+	private Image bulletImage;
+	private ArrayList<PlayerBullet> bulletList = new ArrayList<PlayerBullet>();
 
 	public static void main(String[] args) 
 	{
@@ -26,9 +30,12 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 		ImageIcon Icon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\space_invader.png");
 		Image AlienImg = Icon.getImage();
 		AlienImg = AlienImg.getScaledInstance(50, 50, Image.SCALE_DEFAULT);
+		ImageIcon Icon2 = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\alien3.png");
+		Image AlienImg2 = Icon2.getImage();
+		AlienImg2 = AlienImg2.getScaledInstance(50, 50, Image.SCALE_DEFAULT);
 		for (int i = 0; i < NUMALIENS; i++)
 		{
-			AliensArray[i] = new Alien(AlienImg, (int)WindowSize.getWidth());
+			AliensArray[i] = new Alien(AlienImg, AlienImg2,(int)WindowSize.getWidth());
 			AliensArray[i].setPosition(Math.floor(i/5)*60  , 100+(i%5)*50);
 			//sets them in rows with 5 colomns by diving by 5 and flooring to get X offset
 		}
@@ -37,6 +44,10 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 		Image PlayerImage = PlayerIcon.getImage();
 		PlayerImage = PlayerImage.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
 		PlayerShip = new Spaceship(PlayerImage, (int)WindowSize.getWidth());
+		
+		ImageIcon BulletIcon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\circle2.png");
+		Image BulletImage = BulletIcon.getImage();
+		bulletImage = BulletImage.getScaledInstance(10, 10, Image.SCALE_DEFAULT);
 		
 		addKeyListener(this);
 		
@@ -66,9 +77,6 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 			for (int i = 0; i < NUMALIENS; i++)
 			{
 				hitEdge = AliensArray[i].move() || hitEdge;
-				/*Order important, either use this order or use a single pipe OR.
-					If not: after the first alien hit the edge in a turn statement would evaluate to true
-					on the first part so it would never call the move method for the remaining aliens.*/
 			}
 			if (hitEdge)
 			{
@@ -77,9 +85,40 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 					AliensArray[j].reverseDirection();
 				}
 			}
+			for( PlayerBullet bullet : this.bulletList)
+			{
+				bullet.move();
+			}
+			
+			for( PlayerBullet bullet : this.bulletList)
+			{
+				if (bullet.isAlive)
+				{
+					for (int i = 0; i < NUMALIENS; i++)
+					{
+						if(AliensArray[i].isAlive)
+						{
+						
+							if(((bullet.x > AliensArray[i].x) && (bullet.x < AliensArray[i].x + AliensArray[i].image.getWidth(null)) ||
+									(bullet.x < AliensArray[i].x) && (bullet.x + bullet.image.getWidth(null) > AliensArray[i].x))
+									&&
+									((AliensArray[i].y < bullet.y) && (AliensArray[i].y + AliensArray[i].image.getHeight(null)> bullet.y) ||
+									(bullet.y < AliensArray[i].y) && (bullet.y + bullet.image.getHeight(null)> AliensArray[i].y)))
+							{
+								//System.out.println("hit");
+								bullet.isAlive = false;
+								AliensArray[i].isAlive = false;
+							}
+						}
+					}
+				}
+				
+			}
+			
+			
 			this.repaint();
 			try {
-				Thread.sleep(10);
+				Thread.sleep(20);
 			} catch (InterruptedException e) 
 			{
 				e.printStackTrace();
@@ -87,6 +126,12 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 		}
 	}
 	
+	public void shootBullet(double x, double y)
+	{
+		//System.out.println("fire");
+		PlayerBullet b = new PlayerBullet(bulletImage, WindowSize.width, (int)x, (int)y );
+		bulletList.add(b);
+	}
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) 
@@ -101,7 +146,15 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		PlayerShip.setXSpeed(0);
+		
+		if(e.getKeyCode() == KeyEvent.VK_SPACE)
+		{
+			shootBullet(PlayerShip.x, PlayerShip.y);
+		}
+		else
+		{
+			PlayerShip.setXSpeed(0);
+		}
 	}
 
 	@Override
@@ -125,6 +178,11 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 			for (int i = 0; i < NUMALIENS; i++)
 			{
 				AliensArray[i].paint(g);
+			}
+			for( PlayerBullet bullet : this.bulletList)
+			{
+				bullet.paint(g);
+				
 			}
 			PlayerShip.move();
 			PlayerShip.paint(g);

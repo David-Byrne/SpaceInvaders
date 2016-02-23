@@ -1,13 +1,12 @@
-package week4;
+package week5;
 
 import java.awt.Image;
 
 public class Spaceship extends Sprite2D{
 
 	public Spaceship(Image i, int windowWidth) {
-		super(i, windowWidth);
+		super(i, i, windowWidth);
 		this.setPosition(10 + winWidth/2, 570);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void move()

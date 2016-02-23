@@ -1,4 +1,4 @@
-package week4;
+package week5;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -7,12 +7,15 @@ public abstract class Sprite2D
 {
 	protected double x, y;
 	protected double xSpeed = 0;
-	protected Image image;
+	protected Image image, image2;
 	int winWidth;
+	protected int framesDrawn = 0;
+	protected boolean isAlive = true;
 	
-	public Sprite2D(Image i, int windowWidth)
+	public Sprite2D(Image i, Image i2, int windowWidth)
 	{
 		image = i;
+		image2 = i2;
 		winWidth = windowWidth;
 	}
 	
@@ -29,6 +32,18 @@ public abstract class Sprite2D
 	
 	public void paint(Graphics g)
 	{
-		g.drawImage(image, (int)x , (int)y , null);
+		framesDrawn++;
+		
+		if (this.isAlive)
+		{
+			if (framesDrawn % 100 < 50)
+			{
+				g.drawImage(image, (int)x , (int)y , null);
+			}
+			else
+			{
+				g.drawImage(image2, (int)x , (int)y , null);
+			}
+		}
 	}
 }
