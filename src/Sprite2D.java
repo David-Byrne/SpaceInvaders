@@ -1,4 +1,4 @@
-package week5;
+package week6;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -29,7 +29,14 @@ public abstract class Sprite2D
 	{
 		this.xSpeed = dx;
 	}
-	
+	public void setIsAlive(boolean alive)
+	{
+		this.isAlive = alive;
+	}
+	public boolean getIsAlive()
+	{
+		return isAlive;
+	}
 	public void paint(Graphics g)
 	{
 		framesDrawn++;

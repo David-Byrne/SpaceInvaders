@@ -1,19 +1,18 @@
-package week5;
+package week6;
 
 import java.awt.Image;
 
 public class Alien extends Sprite2D{
 	
-	
 
-	public Alien(Image i, Image i2, int windowWidth) {
+	public Alien(Image i, Image i2, int windowWidth, int speed) {
 		super(i, i2, windowWidth);
-		this.xSpeed = 1;
+		this.xSpeed = speed;
 	}
 	
 	public boolean move()
 	{
-		this.x = this.x + (5 * this.xSpeed);
+		this.x = this.x + this.xSpeed;
 		if( this.isAlive)
 		{
 			if(this.x > 740 && this.xSpeed > 0) return true;
@@ -24,12 +23,12 @@ public class Alien extends Sprite2D{
 	
 	public void reverseDirection()
 	{
-		this.y += 10;
+		this.y += 20;
 		this.xSpeed = -1 * this.xSpeed;
 	}
-	private void setIsAlive(boolean alive)
+	public double getXSpeed()
 	{
-		this.isAlive = alive;
+		return xSpeed;
 	}
 
 }
