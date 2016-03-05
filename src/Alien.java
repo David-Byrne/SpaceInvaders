@@ -12,10 +12,11 @@ public class Alien extends Sprite2D{
 	
 	public boolean move()
 	{
+		//System.out.println(winWidth);
 		this.x = this.x + this.xSpeed;
 		if( this.isAlive)
 		{
-			if(this.x > 740 && this.xSpeed > 0) return true;
+			if(this.x > winWidth-60 && this.xSpeed > 0) return true;
 			if(this.x < 10 && this.xSpeed < 0) return true;
 		}
 		return false;

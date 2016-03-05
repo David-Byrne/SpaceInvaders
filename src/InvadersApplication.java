@@ -14,7 +14,7 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 	
 	private boolean isGraphicsInitialised =false;
 	private boolean inProgress = false;
-	private static final Dimension WindowSize = new Dimension(800,600);
+	private static final Dimension WindowSize = new Dimension(1000,600);
 	private BufferStrategy strategy;
 	private static final int NUMALIENS = 30;
 	private Alien[] AliensArray = new Alien[NUMALIENS];
@@ -43,10 +43,10 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 		this.getContentPane().setBackground(Color.BLACK);
 		setVisible(true);
 		
-		isGraphicsInitialised = true;
-		
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
+		
+		isGraphicsInitialised = true;
 		
 		Thread t = new Thread(this);
 		t.run();
@@ -152,9 +152,9 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 		{
 			g = strategy.getDrawGraphics();
 			super.paintComponents(g);
-			g.setFont(new Font("Consolas", Font.PLAIN, 20));
 			g.setColor(Color.GREEN);
-			g.drawString("Score: "+curScore+"   Top Score: "+topScore, 250, 50);
+			//g.drawString("Score: "+curScore+"   Top Score: "+topScore, 250, 50);
+			writeString(g, WindowSize.width/2, 50, 20,"Score: "+curScore+"   Top Score: "+topScore );
 			
 			if(inProgress)
 			{
@@ -180,19 +180,24 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 				ImageIcon Icon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\alien3.png");
 				Image AlienImg = Icon.getImage();
 				//AlienImg = AlienImg.getScaledInstance(100, 100, Image.SCALE_DEFAULT);
-				g.drawImage(AlienImg, 270 , 250 , null);
+				g.drawImage(AlienImg, (WindowSize.width/2)-120 , 250 , null);
 				
-				g.setFont(new Font("Consolas", Font.PLAIN, 70));
-				g.drawString("Space Invaders", 150, 200);
-				
-				g.setFont(new Font("Consolas", Font.PLAIN, 20)); 
-				g.drawString("Press any key to play", 280, 500);
-				
+				writeString(g, WindowSize.width/2, 200, 70,"Space Invaders");
+				writeString(g, WindowSize.width/2, 500, 20,"Press any key to play");
 			}
 			g.dispose();
 			strategy.show();
 		}
 	}
+	private void writeString(Graphics g, int x, int y, int fontSize, String message) {
+		Font f = new Font("Consolas", Font.PLAIN, fontSize);
+		g.setFont(f);
+		FontMetrics fm = getFontMetrics(f);
+		int width = fm.stringWidth(message);
+		g.drawString(message, x-(width/2), y);
+		
+	}
+
 	public void startNewWave(int alienSpeed)
 	{
 		bulletList.clear();
@@ -225,6 +230,7 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 		
 		inProgress = true;
 	}
+	
 	public void gameOver(Graphics g)
 	{
 		super.paintComponents(g);
@@ -234,5 +240,6 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 			this.topScore = this.curScore;
 		}
 		this.inProgress = false;
+		this.curScore = 0;
 	}
 }
