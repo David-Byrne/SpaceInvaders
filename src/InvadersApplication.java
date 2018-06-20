@@ -1,5 +1,3 @@
-package week6;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -177,7 +175,7 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 			}
 			else
 			{
-				ImageIcon Icon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\alien3.png");
+				ImageIcon Icon = new ImageIcon("assets/alien.png");
 				Image AlienImg = Icon.getImage();
 				//AlienImg = AlienImg.getScaledInstance(100, 100, Image.SCALE_DEFAULT);
 				g.drawImage(AlienImg, (WindowSize.width/2)-120 , 250 , null);
@@ -201,10 +199,10 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 	public void startNewWave(int alienSpeed)
 	{
 		bulletList.clear();
-		ImageIcon Icon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\space_invader.png");
+		ImageIcon Icon = new ImageIcon("assets/alien.png");
 		Image AlienImg = Icon.getImage();
 		AlienImg = AlienImg.getScaledInstance(50, 50, Image.SCALE_DEFAULT);
-		ImageIcon Icon2 = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\alien3.png");
+		ImageIcon Icon2 = new ImageIcon("assets/alien2.png");
 		Image AlienImg2 = Icon2.getImage();
 		AlienImg2 = AlienImg2.getScaledInstance(50, 50, Image.SCALE_DEFAULT);
 		for (int i = 0; i < NUMALIENS; i++)
@@ -219,12 +217,12 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 	{
 		startNewWave(5); 
 		
-		ImageIcon PlayerIcon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\player_ship.png");
+		ImageIcon PlayerIcon = new ImageIcon("assets/player_ship.png");
 		Image PlayerImage = PlayerIcon.getImage();
 		PlayerImage = PlayerImage.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
 		PlayerShip = new Spaceship(PlayerImage, (int)WindowSize.getWidth());
 		
-		ImageIcon BulletIcon = new ImageIcon("C:\\Users\\David\\OneDrive\\Documents\\Second Year\\CT255 Next Generation Technology\\Game dev\\circle2.png");
+		ImageIcon BulletIcon = new ImageIcon("assets/bullet.png");
 		Image BulletImage = BulletIcon.getImage();
 		bulletImage = BulletImage.getScaledInstance(10, 10, Image.SCALE_DEFAULT);
 		

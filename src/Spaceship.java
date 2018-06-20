@@ -1,5 +1,3 @@
-package week6;
-
 import java.awt.Image;
 
 public class Spaceship extends Sprite2D{

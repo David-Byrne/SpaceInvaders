@@ -1,2 +1,2 @@
 # SpaceInvaders
-A version of the classic game Space invaders written in Java
+A version of the classic game 'Space Invaders' written in Java

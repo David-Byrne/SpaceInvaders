@@ -1,5 +1,3 @@
-package week6;
-
 import java.awt.Image;
 
 public class Alien extends Sprite2D{
